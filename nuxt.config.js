@@ -11,7 +11,6 @@ export default {
       { hid: 'description', name: 'description', content: '' },
       { name: 'format-detection', content: 'telephone=no' },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -30,12 +29,12 @@ export default {
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  // serverMiddleware: ['~/api/index.js'], // [TODO] 설정해야 함
+  serverMiddleware: ['~/api/index.js'], // [TODO] 설정해야 함
   // https://fkkmemi.github.io/nuxt/nuxt-003-routing/
-  modules: ["@nuxtjs/axios"],
+  modules: ['@nuxtjs/axios'],
   axios: {
-    proxy: true
- },
+    proxy: true,
+  },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
 }

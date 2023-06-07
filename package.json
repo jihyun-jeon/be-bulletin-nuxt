@@ -1,11 +1,11 @@
 {
-  "name": "be-bul",
+  "name": "bulletin-nuxt",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
-    "start": "nuxt start",
+    "start": "nodemon ./src/index.js",
     "generate": "nuxt generate",
     "lint:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
     "lint:prettier": "prettier --check .",
@@ -31,6 +31,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-nuxt": "^4.0.0",
     "eslint-plugin-vue": "^9.5.1",
+    "nodemon": "^2.0.22",
     "prettier": "^2.7.1"
   }
 }

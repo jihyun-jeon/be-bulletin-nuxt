@@ -1,14 +1,19 @@
-const express = require("express");
-const app = express();
-const bodyParser = require("body-parser")
+const express = require('express')
+const app = express()
+const bodyParser = require('body-parser')
+const compression = require('compression')
 
-app.use(bodyParser.urlencoded({extended:true}));
-app.use(bodyParser.json());
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
+// Require API routes
+const test = require('./bulletin')
 
+app.use(test)
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
+app.use(compression())
+app.use('/', express.static('../static'))
 
-// [순서]5
+// [순서]5 - db 연결
+/*
 const mysql = require("mysql");
 
 const connection = mysql.createConnection({
@@ -28,18 +33,10 @@ connection.connect(function (err) {
     console.error('mysql 연결 성공');
   }
 });
+*/
 
- app.listen(3000,()=>{
-  console.log("server start~!")
- })
+app.listen(3000, () => {
+  console.log('server start~!')
+})
 
-
-// home route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome  main page" });
-});
-
-// detail route
-app.get("/detail", (req, res) => {
-  res.json({ message: "Welcome  detail page" });
-});
+module.exports = app
