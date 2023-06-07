@@ -29,7 +29,7 @@ export default {
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  serverMiddleware: ['~/api/index.js'], // [TODO] 설정해야 함
+  serverMiddleware: ['~/api/index.js'], // [TODO] 미들웨어를 추가할 수 있는 연결 인스턴스를 내부적으로 생성
   // https://fkkmemi.github.io/nuxt/nuxt-003-routing/
   modules: ['@nuxtjs/axios'],
   axios: {

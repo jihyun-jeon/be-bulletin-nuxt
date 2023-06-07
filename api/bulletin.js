@@ -1,22 +1,25 @@
+//
 const fs = require('fs')
 const { Router } = require('express')
 
-const router = Router()
+const router = Router() // router 객체는 라우팅 로직을 그룹화하여 분리합니다.
 
-// Test route
-// router.use('/test', (req, res) => {
-//   res.end('Test API!')
-// })
 
 // home route
-router.get('/api', function (request, response) {
+router.get('/', function (request, response) {
   fs.readFile('./static/bulletin.json', (err, data) => {
     if (err) {
       console.log('err', err)
+      response.status(500).send('json Error');
+      return;
     }
     const bulData = JSON.parse(data)
-    response.send(bulData)
+    response.status(200).send(bulData)
   })
+})
+
+router.delete('/delete/:boardId', function (request, response) {
+  // [TODO]console.log(request.params)
 })
 
 // detail route

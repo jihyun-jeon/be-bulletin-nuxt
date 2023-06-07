@@ -4,13 +4,13 @@ const bodyParser = require('body-parser')
 const compression = require('compression')
 
 // Require API routes
-const test = require('./bulletin')
+const bulletin = require('./bulletin');
+app.use('/bulletin',bulletin);
 
-app.use(test)
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
-app.use(compression())
-app.use('/', express.static('../static'))
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(compression());
+// app.use('/', express.static('static')); // 파일 자체를 응답하는 것.
 
 // [순서]5 - db 연결
 /*
