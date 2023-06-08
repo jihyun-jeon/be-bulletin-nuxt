@@ -2,11 +2,13 @@
 <template>
   <div class="mainWrapper">
     <div>
-      <h1>title : {{ itemData.title }}</h1>
+      <h1>title : <input v-model="titleData" /></h1>
       <p>user_id : {{ itemData.user_id }}</p>
       <p>create_at : {{ itemData.create_at }}</p>
       <p>hit : {{ itemData.hit }}</p>
       <p>content : {{ itemData.content }}</p>
+
+      <button @click="onModify">수정하기</button>
     </div>
   </div>
 </template>
@@ -17,12 +19,30 @@ export default {
   data() {
     return {
       itemData: {},
+      titleData: '',
     }
   },
+
   async mounted() {
     const id = this.$route.params.id
-    const [res] = await this.$axios.$get(`/bulletin/${id}`)
+    const [res] = await this.$axios.$get(`/api/get/${id}`)
     this.itemData = res
+    this.titleData = res.title
+  },
+  methods: {
+    async onModify() {
+      // 1. patch
+      const id = this.$route.params.id
+      await this.$axios.$patch(`/api/patch/${id}`, {
+        id,
+        title: this.titleData,
+      })
+
+      // 2. get
+      const [res] = await this.$axios.$get(`/api/get/${id}`)
+      this.itemData = res
+      this.titleData = res.title
+    },
   },
 }
 </script>
