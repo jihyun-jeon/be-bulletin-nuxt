@@ -1,4 +1,4 @@
-# be-bul
+# bulletin-nuxt
 
 ## Build Setup
 
