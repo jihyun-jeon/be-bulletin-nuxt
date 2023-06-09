@@ -27,7 +27,10 @@ const router = Router() // router 객체는 라우팅 로직을 그룹화하여 
 
 // <home all GET>
 router.get('/get', function (request, response) {
-  const query = 'SELECT * FROM boards'
+  const { page, size } = ('request', request.query)
+
+  // SELECT * FROM boards LIMIT <페이지당 자료 개수> OFFSET <몇번째 row부터 출력할 지. (1번째 row면 0)>
+  const query = `SELECT * FROM boards LIMIT ${size}  OFFSET ${(page - 1) * 10}` // offset 0 10 20
 
   connection.query(query, (error, results) => {
     if (error) {
@@ -38,6 +41,19 @@ router.get('/get', function (request, response) {
     }
   })
 })
+
+// <home, GET data length>
+// router.get('/all-length', (request, response) => {
+//   const query = 'SELECT * FROM boards'
+//   connection.query(query, (error, results) => {
+//     if (error) {
+//       console.error('MySql 길이 get요청 에러', error)
+//       response.status(500).send({ error: '데이터베이스 길이 조회 실패' })
+//     } else {
+//       response.status(200).send(results)
+//     }
+//   })
+// })
 
 // <detail one item GET>
 router.get('/get/:boardId', function (request, response) {
@@ -71,14 +87,13 @@ router.delete('/delete/:itemId', function (request, response) {
 })
 
 // <one item POST>
-// [TODO] 문서 보기
-// https://www.npmjs.com/package/mysql#escaping-query-values
-// https://www.npmjs.com/package/mysql#escaping-query-values
+// [TODO] 문서 보기 https://www.npmjs.com/package/mysql#escaping-query-values
+// Escaping query values
 router.post('/post', function (request, response) {
   const postData = request.body
 
   const query = `insert into boards set ?`
-  connection.query(query, postData, (error, results) => {
+  connection.query(query, [postData], (error, results) => {
     if (error) {
       console.error('MySql item post 요청 에러', error)
       response.status(500).send({ error: '데이터베이스 생성 실패' })
@@ -90,8 +105,8 @@ router.post('/post', function (request, response) {
 
 // <one item PATCH>
 router.patch('/patch/:id', function (request, response) {
-  const boardId = request.params.id
   const updateData = request.body
+  const boardId = request.params.id
 
   const query = 'UPDATE boards SET ? where id = ?'
   connection.query(query, [updateData, boardId], (error, results) => {

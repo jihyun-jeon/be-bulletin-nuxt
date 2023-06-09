@@ -23,7 +23,7 @@ export default {
     }
   },
 
-  async mounted() {
+  async created() {
     const id = this.$route.params.id
     const [res] = await this.$axios.$get(`/api/get/${id}`)
     this.itemData = res

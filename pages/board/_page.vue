@@ -2,11 +2,18 @@
   <div>
     <h5>bulletin board</h5>
     <button @click="onClickCreat">글쓰기</button>
+    <ul class="pagenation">
+      <li>페이지네이션</li>
+      <li><nuxt-link :to="`/board/1`">1</nuxt-link></li>
+      <li><nuxt-link :to="`/board/2`">2</nuxt-link></li>
+      <li><nuxt-link :to="`/board/3`">3</nuxt-link></li>
+    </ul>
     <ul v-for="item in bulletinList" :key="item.id">
       <li>
         <button @click="onDelete(item.id)">x</button>
 
-        <nuxt-link :to="`/detail/${item.id}`">
+        <nuxt-link :to="`/detail/${item.id}`" class="rows">
+          <p>{{ item.id }}</p>
           <p>{{ item.title }}</p>
           <p>{{ item.user_id }}</p>
           <p>{{ item.create_at }}</p>
@@ -26,8 +33,17 @@ export default {
     }
   },
   async created() {
-    const result = await this.$axios.$get('/api/get')
+    const id = this.$route.params.page
+    const result = await this.$axios.$get('/api/get', {
+      params: {
+        page: id,
+        size: 10,
+      },
+    })
     this.bulletinList = result
+
+    // const totalLength = await this.$axios.$get('/api/all-length')
+    // console.log('totalLength', totalLength)
   },
 
   methods: {
@@ -53,6 +69,18 @@ export default {
 </script>
 
 <style scoped>
+.rows {
+  display: flex;
+  justify-content: space-between;
+  width: 800px;
+  background-color: lightgray;
+}
+.pagenation {
+  width: 30vw;
+  display: flex;
+  justify-content: space-around;
+  list-style: none;
+}
 .item {
   display: flex;
   justify-content: space-between;
