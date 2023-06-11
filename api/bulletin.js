@@ -11,6 +11,7 @@ const connection = mysql.createConnection({
   user: 'root',
   database: 'bulletin',
   password: '1234',
+  multipleStatements: true
 })
 
 // DB Connect
@@ -30,16 +31,23 @@ router.get('/get', function (request, response) {
   const { page, size } = ('request', request.query)
 
   // SELECT * FROM boards LIMIT <페이지당 자료 개수> OFFSET <몇번째 row부터 출력할 지. (1번째 row면 0)>
-  const query = `SELECT * FROM boards LIMIT ${size}  OFFSET ${(page - 1) * 10}` // offset 0 10 20
+  const query = `SELECT * FROM boards ORDER BY id DESC LIMIT ${size}  OFFSET ${(page - 1) * 10};` // offset 0 10 20
+  const countQuery = 'SELECT count(*) as total FROM boards;'
 
-  connection.query(query, (error, results) => {
+
+  connection.query(query+countQuery, (error, results) => {
+    // console.log("results",results) // [[{},{},{}...],[total:56]]
     if (error) {
       console.error('MySql get요청 에러', error)
       response.status(500).send({ error: '데이터베이스 조회 실패' })
     } else {
-      response.status(200).send(results)
+      response.status(200).send({
+        data : results[0],
+        total : results[1][0].total
+      })
     }
   })
+
 })
 
 // <home, GET data length>

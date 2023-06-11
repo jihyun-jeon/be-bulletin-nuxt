@@ -1,15 +1,19 @@
+<!-- eslint-disable vue/attribute-hyphenation -->
 <template>
-  <div>
-    <h5>bulletin board</h5>
-    <button @click="onClickCreat">글쓰기</button>
-    <ul class="pagenation">
-      <li>페이지네이션</li>
-      <li><nuxt-link :to="`/board/1`">1</nuxt-link></li>
-      <li><nuxt-link :to="`/board/2`">2</nuxt-link></li>
-      <li><nuxt-link :to="`/board/3`">3</nuxt-link></li>
-    </ul>
-    <ul v-for="item in bulletinList" :key="item.id">
-      <li>
+  <v-app id="app">
+    <h1>bulletin board</h1>
+
+    <WriteForm :getData="getData" />
+
+    <ul>
+      <li class="rows">
+        <p>번호</p>
+        <p>제목</p>
+        <p>작성자</p>
+        <p>작성일</p>
+        <p>조회수</p>
+      </li>
+      <li v-for="item in bulletinList" :key="item.id">
         <button @click="onDelete(item.id)">x</button>
 
         <nuxt-link :to="`/detail/${item.id}`" class="rows">
@@ -21,48 +25,54 @@
         </nuxt-link>
       </li>
     </ul>
-  </div>
+    <ul class="pagenation">
+      <li>페이지네이션</li>
+      <li v-for="page in pageNum" :key="page">
+        <nuxt-link :to="`/board/${page}`">{{ page }}</nuxt-link>
+      </li>
+    </ul>
+  </v-app>
 </template>
 
 <script>
+import WriteForm from '../../components/WriteForm.vue'
 export default {
   name: 'IndexPage',
+  components: {
+    WriteForm,
+  },
   data() {
     return {
       bulletinList: [],
+      pageNum: 1,
     }
   },
-  async created() {
-    const id = this.$route.params.page
-    const result = await this.$axios.$get('/api/get', {
-      params: {
-        page: id,
-        size: 10,
-      },
-    })
-    this.bulletinList = result
-
-    // const totalLength = await this.$axios.$get('/api/all-length')
-    // console.log('totalLength', totalLength)
+  watch: {
+    bulletinList() {
+      console.log('bulletinList', this.bulletinList)
+    },
+  },
+  created() {
+    this.getData()
   },
 
   methods: {
+    async getData() {
+      const id = this.$route.params.page
+      const { data, total } = await this.$axios.$get('/api/get', {
+        params: {
+          page: id,
+          size: 10,
+        },
+      })
+
+      this.bulletinList = data
+      this.pageNum = Math.round(total / 10)
+    },
+
     async onDelete(itemID) {
       await this.$axios.$delete(`/api/delete/${itemID}`)
-      const result = await this.$axios.$get('/api/get')
-      this.bulletinList = result
-    },
-    // post요청시 바디에 담은 객체는 브라우저에서 "문자로" 변환해서 보내짐.
-    // 때문에 body-parser을 통해 문자열을 다시 객체로 바꿔주는 것임.
-    async onClickCreat() {
-      await this.$axios.$post('/api/post', {
-        user_id: 'ddebiasio2m',
-        title: "Gideon's Army",
-        content:
-          'Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A small river named Duden flows by the...',
-        create_at: '2023-02-17',
-        hit: 74,
-      })
+      await this.getData()
     },
   },
 }

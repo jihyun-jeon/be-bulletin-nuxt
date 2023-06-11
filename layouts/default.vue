@@ -5,7 +5,7 @@
       <ul>
         <li><NuxtLink to="/">Home</NuxtLink></li>
         <li><NuxtLink to="/detail">Detail Page</NuxtLink></li>
-        <li><NuxtLink to="/product">product page</NuxtLink></li>
+        <li><NuxtLink to="/board/1">product page</NuxtLink></li>
       </ul>
     </header>
     <Nuxt />

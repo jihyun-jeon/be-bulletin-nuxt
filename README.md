@@ -1,5 +1,10 @@
 # bulletin-nuxt
 
+### pakage.json, scripts 세팅
+
+윈도우에서 실행시 : "dev": "nuxt --hostname 0.0.0.0" <br/>
+맥에서 실행시 : "dev": "nuxt"
+
 ## Build Setup
 
 ```bash

@@ -1,27 +1,7 @@
 <template>
-  <div>
-    <!-- <h5>bulletin board</h5>
-    <button @click="onClickCreat">글쓰기</button>
-    <ul class="pagenation">
-      <li>페이지네이션</li>
-      <li><nuxt-link :to="`/board/1`">1</nuxt-link></li>
-      <li><nuxt-link :to="`/board/2`">2</nuxt-link></li>
-      <li><nuxt-link :to="`/board/3`">3</nuxt-link></li>
-    </ul>
-     <ul v-for="item in bulletinList" :key="item.id">
-      <li>
-        <button @click="onDelete(item.id)">x</button>
-
-        <nuxt-link :to="`/detail/${item.id}`" class="rows">
-          <p>{{ item.id }}</p>
-          <p>{{ item.title }}</p>
-          <p>{{ item.user_id }}</p>
-          <p>{{ item.create_at }}</p>
-          <p>{{ item.hit }}</p>
-        </nuxt-link>
-      </li>
-    </ul> -->
-  </div>
+  <v-app id="app">
+    <h1>home</h1>
+  </v-app>
 </template>
 
 <script>
