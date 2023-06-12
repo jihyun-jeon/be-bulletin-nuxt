@@ -20,22 +20,37 @@
           <p>{{ item.id }}</p>
           <p>{{ item.title }}</p>
           <p>{{ item.user_id }}</p>
-          <p>{{ item.create_at }}</p>
+          <!-- <p>{{ item.create_at }}</p> -->
+          <p>
+            {{ item.create_at }}
+          </p>
           <p>{{ item.hit }}</p>
         </nuxt-link>
       </li>
     </ul>
     <ul class="pagenation">
-      <li>페이지네이션</li>
+      <li>
+        <button>&lt;&lt;</button>
+        <button>&lt;</button>
+      </li>
       <li v-for="page in pageNum" :key="page">
         <nuxt-link :to="`/board/${page}`">{{ page }}</nuxt-link>
+      </li>
+      <li>
+        <button>&gt;</button>
+        <button>&gt;&gt;</button>
       </li>
     </ul>
   </v-app>
 </template>
 
 <script>
+import isToday from 'date-fns/isToday'
+import { format } from 'date-fns'
 import WriteForm from '../../components/WriteForm.vue'
+
+const COUNTITEM = 3
+
 export default {
   name: 'IndexPage',
   components: {
@@ -47,13 +62,11 @@ export default {
       pageNum: 1,
     }
   },
-  watch: {
-    bulletinList() {
-      console.log('bulletinList', this.bulletinList)
-    },
-  },
   created() {
     this.getData()
+  },
+  mounted() {
+    //
   },
 
   methods: {
@@ -62,12 +75,18 @@ export default {
       const { data, total } = await this.$axios.$get('/api/get', {
         params: {
           page: id,
-          size: 10,
+          size: COUNTITEM,
         },
       })
-
+      //  // 특정 날짜가 오늘인지 확인 human readable format
+      data.forEach(
+        (item) =>
+          (item.create_at = isToday(new Date(item.create_at))
+            ? '오늘'
+            : format(new Date(item.create_at), 'yyyy-MM-dd')) // 날짜를 원하는 형식으로 포맷팅
+      )
       this.bulletinList = data
-      this.pageNum = Math.round(total / 10)
+      this.pageNum = Math.round(total / COUNTITEM)
     },
 
     async onDelete(itemID) {
@@ -86,7 +105,7 @@ export default {
   background-color: lightgray;
 }
 .pagenation {
-  width: 30vw;
+  width: 800px;
   display: flex;
   justify-content: space-around;
   list-style: none;
