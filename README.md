@@ -5,6 +5,10 @@
 윈도우에서 실행시 : "dev": "nuxt --hostname 0.0.0.0" <br/>
 맥에서 실행시 : "dev": "nuxt"
 
+### 스택
+
+Mysql, Express, Nuxt, Vuetify
+
 ## Build Setup
 
 ```bash
