@@ -12,7 +12,7 @@
       <li
         v-for="num in list"
         :key="num"
-        :class="{ page: true, active: page === num }"
+        :class="{ page: true, active: pageNum === num }"
       >
         <button type="button" @click="goto(num)">
           {{ num }}
@@ -74,7 +74,14 @@ export default {
       return new Array(itemCount).fill(null).map((_, idx) => start + idx + 1)
     },
   },
+  watch: {
+    page() {
+      console.log(this.page)
+      this.pageNum = this.page ?? 1
+    },
+  },
   mounted() {
+    console.log('this.page ', this.page)
     this.pageNum = this.page ?? 1
   },
   methods: {

@@ -26,7 +26,7 @@
       </li>
     </ul>
     <PaginationVue
-      :page="1"
+      :page="+$route.params.page"
       :totalCount="69"
       :itemsPerPage="5"
       :pagesPerGroup="5"
@@ -90,7 +90,7 @@ export default {
     this.getData()
   },
   mounted() {
-    //
+    console.log(' this.$route.params.page', this.$route.params.page)
   },
 
   methods: {
