@@ -20,27 +20,35 @@
           <p>{{ item.id }}</p>
           <p>{{ item.title }}</p>
           <p>{{ item.user_id }}</p>
-          <!-- <p>{{ item.create_at }}</p> -->
-          <p>
-            {{ item.create_at }}
-          </p>
+          <p>{{ item.create_at }}</p>
           <p>{{ item.hit }}</p>
         </nuxt-link>
       </li>
     </ul>
-    <ul class="pagenation">
+    <PaginationVue
+      :page="1"
+      :totalCount="69"
+      :itemsPerPage="5"
+      :pagesPerGroup="5"
+      @goto="goPage"
+    />
+    <!-- <ul class="pagenation">
       <li>
         <button>&lt;&lt;</button>
-        <button>&lt;</button>
+        <button @click="goPrev">&lt;</button>
       </li>
-      <li v-for="page in pageNum" :key="page">
-        <nuxt-link :to="`/board/${page}`">{{ page }}</nuxt-link>
+      <li v-for="page in pageNumList" :key="page" @click="onNumClick(page)">
+        <nuxt-link
+          :to="`/board/${page}`"
+          :class="nowClicked === page ? 'clicked' : 'pageNum'"
+          >{{ page }}</nuxt-link
+        >
       </li>
       <li>
-        <button>&gt;</button>
+        <button @click="goNext">&gt;</button>
         <button>&gt;&gt;</button>
       </li>
-    </ul>
+    </ul> -->
   </v-app>
 </template>
 
@@ -48,19 +56,35 @@
 import isToday from 'date-fns/isToday'
 import { format } from 'date-fns'
 import WriteForm from '../../components/WriteForm.vue'
-
-const COUNTITEM = 3
+import { COUNTITEM } from '../../constant'
+import PaginationVue from '../../components/Pagination.vue'
 
 export default {
   name: 'IndexPage',
   components: {
     WriteForm,
+    PaginationVue,
   },
   data() {
     return {
       bulletinList: [],
-      pageNum: 1,
+      pageNumList: [],
+      pageChunkNum: 0,
+      nowClicked: 1,
     }
+  },
+  computed: {
+    parmaId() {
+      return this.$route.params.page
+    },
+  },
+  watch: {
+    pageChunkNum() {
+      this.getData()
+    },
+    parmaId() {
+      this.getData()
+    },
   },
   created() {
     this.getData()
@@ -70,6 +94,9 @@ export default {
   },
 
   methods: {
+    goPage(page) {
+      this.$router.push(`/board/${page}`)
+    },
     async getData() {
       const id = this.$route.params.page
       const { data, total } = await this.$axios.$get('/api/get', {
@@ -78,7 +105,7 @@ export default {
           size: COUNTITEM,
         },
       })
-      //  // 특정 날짜가 오늘인지 확인 human readable format
+      // 특정 날짜가 오늘인지 확인 human readable format
       data.forEach(
         (item) =>
           (item.create_at = isToday(new Date(item.create_at))
@@ -86,12 +113,37 @@ export default {
             : format(new Date(item.create_at), 'yyyy-MM-dd')) // 날짜를 원하는 형식으로 포맷팅
       )
       this.bulletinList = data
-      this.pageNum = Math.round(total / COUNTITEM)
+
+      const AllNumList = new Array(Math.round(total / COUNTITEM))
+        .fill(null)
+        .map((_, idx) => idx + 1) //  59/3 =  20
+
+      // 5단위로 페이지네이션
+      const cal = this.pageChunkNum * 5
+      this.pageNumList = AllNumList.slice(cal, cal + 5)
     },
 
     async onDelete(itemID) {
       await this.$axios.$delete(`/api/delete/${itemID}`)
       await this.getData()
+    },
+
+    goPrev() {
+      if (!this.pageChunkNum) {
+        return 0
+      }
+      this.pageChunkNum -= 1
+    },
+    goNext() {
+      // 마지막 페이지면
+      // if (!this.pageChunkNum) {
+      //   return 0
+      // }
+      this.pageChunkNum += 1
+    },
+    onNumClick(page) {
+      console.log('page', page)
+      this.nowClicked = page
     },
   },
 }
@@ -114,5 +166,30 @@ export default {
   display: flex;
   justify-content: space-between;
   background-color: lightgray;
+}
+
+.pageNum {
+  width: 30px;
+  height: 30px;
+  background-color: lightcyan;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+.clicked {
+  width: 30px;
+  height: 30px;
+  background-color: orange;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
