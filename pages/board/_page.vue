@@ -26,37 +26,21 @@
       </li>
     </ul>
     <PaginationVue
-      :page="+$route.params.page"
-      :totalCount="69"
-      :itemsPerPage="5"
+      :page="parmaId"
+      :totalCount="totalCount"
+      :itemsPerPage="COUNTITEM"
       :pagesPerGroup="5"
-      @goto="goPage"
+      @changePage="onPageChange"
     />
-    <!-- <ul class="pagenation">
-      <li>
-        <button>&lt;&lt;</button>
-        <button @click="goPrev">&lt;</button>
-      </li>
-      <li v-for="page in pageNumList" :key="page" @click="onNumClick(page)">
-        <nuxt-link
-          :to="`/board/${page}`"
-          :class="nowClicked === page ? 'clicked' : 'pageNum'"
-          >{{ page }}</nuxt-link
-        >
-      </li>
-      <li>
-        <button @click="goNext">&gt;</button>
-        <button>&gt;&gt;</button>
-      </li>
-    </ul> -->
+    <!-- [TODO] slot으로 페이지네이션 버튼 하위 컴포넌트로 넘겨주기 -->
   </v-app>
 </template>
 
 <script>
 import isToday from 'date-fns/isToday'
 import { format } from 'date-fns'
-import WriteForm from '../../components/WriteForm.vue'
 import { COUNTITEM } from '../../constant'
+import WriteForm from '../../components/WriteForm.vue'
 import PaginationVue from '../../components/Pagination.vue'
 
 export default {
@@ -68,20 +52,16 @@ export default {
   data() {
     return {
       bulletinList: [],
-      pageNumList: [],
-      pageChunkNum: 0,
-      nowClicked: 1,
+      totalCount: 0,
+      COUNTITEM, // this는 이 컴포넌트의 인스턴스 객체이기 때문에 import로 가져온 상수를 data에 등록하여, 인스턴스 객체의 프로퍼티로 등록하여 사용해야 함
     }
   },
   computed: {
     parmaId() {
-      return this.$route.params.page
+      return +this.$route.params.page
     },
   },
   watch: {
-    pageChunkNum() {
-      this.getData()
-    },
     parmaId() {
       this.getData()
     },
@@ -89,19 +69,15 @@ export default {
   created() {
     this.getData()
   },
-  mounted() {
-    console.log(' this.$route.params.page', this.$route.params.page)
-  },
 
   methods: {
-    goPage(page) {
+    onPageChange(page) {
       this.$router.push(`/board/${page}`)
     },
     async getData() {
-      const id = this.$route.params.page
       const { data, total } = await this.$axios.$get('/api/get', {
         params: {
-          page: id,
+          page: this.parmaId,
           size: COUNTITEM,
         },
       })
@@ -113,37 +89,12 @@ export default {
             : format(new Date(item.create_at), 'yyyy-MM-dd')) // 날짜를 원하는 형식으로 포맷팅
       )
       this.bulletinList = data
-
-      const AllNumList = new Array(Math.round(total / COUNTITEM))
-        .fill(null)
-        .map((_, idx) => idx + 1) //  59/3 =  20
-
-      // 5단위로 페이지네이션
-      const cal = this.pageChunkNum * 5
-      this.pageNumList = AllNumList.slice(cal, cal + 5)
+      this.totalCount = total
     },
 
     async onDelete(itemID) {
       await this.$axios.$delete(`/api/delete/${itemID}`)
       await this.getData()
-    },
-
-    goPrev() {
-      if (!this.pageChunkNum) {
-        return 0
-      }
-      this.pageChunkNum -= 1
-    },
-    goNext() {
-      // 마지막 페이지면
-      // if (!this.pageChunkNum) {
-      //   return 0
-      // }
-      this.pageChunkNum += 1
-    },
-    onNumClick(page) {
-      console.log('page', page)
-      this.nowClicked = page
     },
   },
 }

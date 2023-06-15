@@ -92,7 +92,7 @@ export default {
         user_id: this.userName,
         title: this.title,
         content: this.content,
-        create_at: '2023-02-17',
+        // create_at: '2023-02-17',
         hit: 74,
       })
       // 새로 get요청

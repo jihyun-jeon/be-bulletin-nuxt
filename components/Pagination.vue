@@ -37,13 +37,11 @@ export default {
   props: {
     page: { type: Number, defult: 1 },
     totalCount: { type: Number, required: true },
-    itemsPerPage: { type: Number, default: 5 },
+    itemsPerPage: { type: Number, default: 3 },
     pagesPerGroup: { type: Number, default: 5 },
   },
   emits: {
-    prev: null,
-    next: null,
-    goto: null,
+    changePage: null,
   },
   data() {
     return {
@@ -64,7 +62,7 @@ export default {
       const pages = this.totalPages
 
       if (pages < 1) {
-        return []
+        return [1]
       }
 
       const start = (this.currentGroup - 1) * this.pagesPerGroup
@@ -76,39 +74,39 @@ export default {
   },
   watch: {
     page() {
-      console.log(this.page)
       this.pageNum = this.page ?? 1
     },
   },
   mounted() {
-    console.log('this.page ', this.page)
     this.pageNum = this.page ?? 1
   },
   methods: {
     previousPage() {
       if (this.pageNum > 1) {
-        this.$emit('prev', --this.pageNum)
+        this.$emit('changePage', --this.pageNum)
       }
     },
     nextPage() {
       if (this.pageNum < this.totalPages) {
-        this.$emit('next', ++this.pageNum)
+        this.$emit('changePage', ++this.pageNum)
       }
     },
     previousGroup() {
       if (this.currentGroup > 1) {
-        this.pageNum -= this.pagesPerGroup
-        this.$emit('prev', this.pageNum)
+        // currentGroup = 5 : 16 // 4 : 11 // 3: 6 // 2:1
+        const newPageNum = (this.currentGroup - 2) * this.pagesPerGroup + 1
+        this.$emit('changePage', newPageNum)
       }
     },
     nextGroup() {
       if (this.currentGroup < this.totalGroups) {
-        this.pageNum += this.pagesPerGroup
-        this.$emit('next', this.pageNum)
+        // currentGroup = 1 : 1 // 2: 6 // 3 : 11 // 4: 16 // 5: 21
+        const newPageNum = this.currentGroup * this.pagesPerGroup + 1
+        this.$emit('changePage', newPageNum)
       }
     },
     goto(num) {
-      this.$emit('goto', num)
+      this.$emit('changePage', num) // 페이지네이션 컴포넌트는 페이지 바꾸는 역활막 딱!, 따라서 router를 바꾸는건 emti으로보내 상위컴포넌트에서 처리
       this.pageNum = num
     },
   },
