@@ -1,26 +1,49 @@
 <template>
   <div>
     <header class="header">
-      <p>HEADER - Now page is {{ $route.name }}</p>
-      <ul>
-        <li><NuxtLink to="/">Home</NuxtLink></li>
-        <li><NuxtLink to="/detail">Detail Page</NuxtLink></li>
-        <li><NuxtLink to="/board/1">product page</NuxtLink></li>
-      </ul>
+      <div>
+        <p>HEADER - Now page is {{ $route.name }}</p>
+        <ul>
+          <li><NuxtLink to="/">Home</NuxtLink></li>
+          <li><NuxtLink to="/detail">Detail Page</NuxtLink></li>
+          <li><NuxtLink to="/board/1">product page</NuxtLink></li>
+        </ul>
+      </div>
+      <div>
+        <button class="signup" @click="signup">회원가입</button>
+      </div>
     </header>
     <Nuxt />
   </div>
 </template>
 
 <script>
-export default {}
+export default {
+  methods: {
+    signup() {
+      this.$axios.$post('/api/signup', {
+        id: null,
+        email: 'jhplus13@naver.com',
+        nickname: 'jihyun',
+        password: '1234567890',
+      })
+    },
+  },
+}
 </script>
 
 <style scoped>
 .header {
+  display: flex;
+  justify-content: space-between;
   width: 100vw;
   height: 100px;
+  padding: 0 20px;
   background-color: tan;
+}
+.signup {
+  background-color: skyblue;
+  padding: 10px;
 }
 </style>
 

@@ -2,6 +2,8 @@
 import {COUNTITEM} from "../constant"
 const { Router } = require('express')
 const mysql = require('mysql')
+const bcrypt = require('bcrypt');
+
 
 // [질문] mysql 연결을 index.js에서 공통적으로 처리하는 식으로는 안될지?
 
@@ -100,6 +102,7 @@ router.delete('/delete/:itemId', function (request, response) {
 // Escaping query values
 router.post('/post', function (request, response) {
   const postData = request.body
+  console.log("postData",postData)
 
   const query = `insert into boards set ?`
   connection.query(query, [postData], (error, results) => {
@@ -126,6 +129,30 @@ router.patch('/patch/:id', function (request, response) {
       response.status(200).send({ message: 'patch success' })
     }
   })
+})
+
+// <sign-up>
+const hashPassword = async (password, saltRounds)=>{
+   const result = await bcrypt.hash(password,saltRounds);
+   return result
+}
+
+
+router.post('/signup', async function(request,response){
+   const userPassword = request.body.password
+   const hashedPassword = await hashPassword(userPassword,10);  // saltRounds : salt 강도 (10)
+   const postData =  {...request.body, 'password' : hashedPassword }
+
+  const query = `INSERT INTO users SET ?`
+  connection.query(query,[postData],(error,results)=>{
+    if(error){
+      console.error("Mysql Signup Error")
+      response.status(500).send({ error: '데이터베이스 생성 실패' })
+    }else{
+      response.status(200).send({ message: 'signup success' })
+    }
+  })
+
 })
 
 module.exports = router
