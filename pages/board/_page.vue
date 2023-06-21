@@ -49,6 +49,7 @@ export default {
     WriteForm,
     PaginationVue,
   },
+
   data() {
     return {
       bulletinList: [],

@@ -10,7 +10,9 @@
         </ul>
       </div>
       <div>
-        <button class="signup" @click="signup">회원가입</button>
+        <NuxtLink to="/signup">
+          <button class="signup">회원가입</button>
+        </NuxtLink>
       </div>
     </header>
     <Nuxt />
@@ -18,18 +20,7 @@
 </template>
 
 <script>
-export default {
-  methods: {
-    signup() {
-      this.$axios.$post('/api/signup', {
-        id: null,
-        email: 'jhplus13@naver.com',
-        nickname: 'jihyun',
-        password: '1234567890',
-      })
-    },
-  },
-}
+export default {}
 </script>
 
 <style scoped>

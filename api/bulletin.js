@@ -137,11 +137,11 @@ const hashPassword = async (password, saltRounds)=>{
    return result
 }
 
-
 router.post('/signup', async function(request,response){
    const userPassword = request.body.password
    const hashedPassword = await hashPassword(userPassword,10);  // saltRounds : salt 강도 (10)
-   const postData =  {...request.body, 'password' : hashedPassword }
+
+   const postData =  {...request.body, 'password' : hashedPassword  }
 
   const query = `INSERT INTO users SET ?`
   connection.query(query,[postData],(error,results)=>{
@@ -152,7 +152,49 @@ router.post('/signup', async function(request,response){
       response.status(200).send({ message: 'signup success' })
     }
   })
-
 })
+
+// <login>
+
+
+router.post("/login",    function comparePasswords(request,response) {
+  const {userEmail , userPassword} = request.body // jhplus13@naver.com
+  const query = `select password from users where email = ?`
+
+  connection.query(query,[userEmail], async (error,results)=>{
+    if(error){
+      console.error("Mysql Login Error")
+      response.status(500).send({ error: 'Internet server error' })
+      return
+    }
+
+    if(!results.length){
+      response.status(401).send({ error: 'no exist user' })
+      return
+    }
+
+    const hashedPassword = results[0].password
+    bcrypt.compare(userPassword, hashedPassword, (err, result) => {
+
+      if (err) {
+        response.status(500).json({ error: "Internal Server Error" });
+      }
+      else if (result) {
+        // 비밀번호가 일치하는 경우 result: true
+        // [TODO] JWT 토큰 발급 등 추가 로직
+        response.status(200).json({ message: "Login success" });
+      }
+      else {
+        response.status(401).json({ error: "Invalid email or password" });
+      }
+    });
+
+
+
+
+  })
+
+} )
+
 
 module.exports = router
