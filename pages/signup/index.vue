@@ -22,6 +22,7 @@
 
 <script>
 export default {
+  layout: 'LoginLayout',
   data() {
     return {
       signupData: {

@@ -10,8 +10,8 @@
         </ul>
       </div>
       <div>
-        <NuxtLink to="/signup">
-          <button class="signup">회원가입</button>
+        <NuxtLink to="/">
+          <button class="logout">Logout</button>
         </NuxtLink>
       </div>
     </header>
@@ -32,7 +32,7 @@ export default {}
   padding: 0 20px;
   background-color: tan;
 }
-.signup {
+.logout {
   background-color: skyblue;
   padding: 10px;
 }

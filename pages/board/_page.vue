@@ -1,8 +1,6 @@
 <!-- eslint-disable vue/attribute-hyphenation -->
 <template>
   <v-app id="app">
-    <h1>bulletin board</h1>
-
     <WriteForm :getData="getData" />
 
     <ul>
@@ -19,7 +17,7 @@
         <nuxt-link :to="`/detail/${item.id}`" class="rows">
           <p>{{ item.id }}</p>
           <p>{{ item.title }}</p>
-          <p>{{ item.user_id }}</p>
+          <p>{{ item.nickname }}</p>
           <p>{{ item.create_at }}</p>
           <p>{{ item.hit }}</p>
         </nuxt-link>
@@ -67,21 +65,31 @@ export default {
       this.getData()
     },
   },
-  created() {
-    this.getData()
+  mounted() {
+    const getUserToken = window.localStorage.getItem('ACCESS_TOKEN')
+    this.getData(getUserToken)
   },
 
   methods: {
     onPageChange(page) {
       this.$router.push(`/board/${page}`)
     },
-    async getData() {
-      const { data, total } = await this.$axios.$get('/api/get', {
-        params: {
-          page: this.parmaId,
-          size: COUNTITEM,
+    async getData(getUserToken) {
+      const { data, total } = await this.$axios.$get(
+        '/api/get',
+        {
+          params: {
+            page: this.parmaId,
+            size: COUNTITEM,
+          },
         },
-      })
+        {
+          headers: {
+            Authorization: getUserToken,
+          },
+        }
+        // [TODO] api짜는 쪽에서 토큰 받아 토큰 인증 미들웨어 구현해야` 함
+      )
       // 특정 날짜가 오늘인지 확인 human readable format
       data.forEach(
         (item) =>
@@ -102,6 +110,9 @@ export default {
 </script>
 
 <style scoped>
+#app {
+  margin-top: 30px;
+}
 .rows {
   display: flex;
   justify-content: space-between;

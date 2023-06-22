@@ -2,12 +2,12 @@
   <div class="mainWrapper">
     <div>
       <h1>title : <input v-model="titleData" /></h1>
-      <p>user_id : {{ itemData.user_id }}</p>
+      <p>nickname : {{ itemData.nickname }}</p>
       <p>create_at : {{ itemData.create_at }}</p>
       <p>hit : {{ itemData.hit }}</p>
       <p>content : {{ itemData.content }}</p>
 
-      <button @click="onModify">수정하기</button>
+      <button class="modifyBtn" @click="onModify">수정하기</button>
     </div>
   </div>
 </template>
@@ -46,6 +46,15 @@ export default {
 }
 </script>
 <style scoped>
+input {
+  border: 1px solid black;
+  border-radius: 8px;
+}
+.modifyBtn {
+  background-color: thistle;
+  padding: 5px;
+  margin-top: 20px;
+}
 .mainWrapper {
   width: 100vw;
   height: 100vh;

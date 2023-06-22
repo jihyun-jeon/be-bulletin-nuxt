@@ -18,6 +18,11 @@
           login
         </button>
       </form>
+      <div>
+        <nuxt-link to="/signup">
+          <button type="button" class="signupBtn">회원가입</button>
+        </nuxt-link>
+      </div>
     </div>
   </v-app>
 </template>
@@ -41,12 +46,14 @@ export default {
       // if(message){}else{}
 
       try {
-        const { message } = await this.$axios.$post(
+        const { message, token } = await this.$axios.$post(
           '/api/login',
           this.loginData
         )
+
         if (message.includes('success')) {
           alert('로그인 성공')
+          window.localStorage.setItem('ACCESS_TOKEN', token)
           this.$router.push('/board/1')
         }
       } catch {
@@ -77,9 +84,10 @@ export default {
 }
 .container {
   width: 100vw;
-  height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
 .formWrapper {
   display: flex;
@@ -99,5 +107,9 @@ export default {
 .loginBtn {
   background-color: teal;
   padding: 5px 10px;
+}
+
+.signupBtn {
+  margin-top: 30px;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Hello World</h1>
+    <h1>Bulletin Board {{ $route.path === '/' ? '- Login' : '- Signup' }}</h1>
     <Nuxt />
   </div>
 </template>

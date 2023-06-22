@@ -27,7 +27,7 @@
 
                 <v-col cols="12" md="4">
                   <v-text-field
-                    v-model="userName"
+                    v-model="nickname"
                     :counter="12"
                     label="작성자"
                     required
@@ -67,7 +67,7 @@ export default {
       dialog: false,
       valid: false,
       title: '',
-      userName: '',
+      nickname: '',
       content: '',
     }
   },
@@ -78,7 +78,7 @@ export default {
         return
       } else {
         // eslint-disable-next-line no-sequences
-        ;(this.title = ''), (this.userName = ''), (this.content = '')
+        ;(this.title = ''), (this.nickname = ''), (this.content = '')
       }
     },
   },
@@ -88,13 +88,21 @@ export default {
     async onClickCreat() {
       this.dialog = false
       // post 요청
-      await this.$axios.$post('/api/post', {
-        user_id: this.userName,
-        title: this.title,
-        content: this.content,
-        // create_at: '2023-02-17',
-        hit: 74,
-      })
+      await this.$axios.$post(
+        '/api/post',
+        {
+          nickname: this.nickname,
+          title: this.title,
+          content: this.content,
+          // create_at: '2023-02-17',
+          hit: 74,
+        }
+        // , {
+        //   headers: {
+        //     Authorization: getUserToken
+        //   },
+        // }
+      )
       // 새로 get요청
       this.getData()
       // this.$emit('updated-get', true)
