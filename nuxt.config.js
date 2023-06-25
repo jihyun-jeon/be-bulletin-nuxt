@@ -16,23 +16,21 @@ export default {
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [],
 
-
-  buildModules: [
-      '@nuxtjs/vuetify',
-      '@nuxtjs/date-fns'
-    ],
+  buildModules: ['@nuxtjs/vuetify', '@nuxtjs/date-fns'],
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
 
-
   // Modules: https://go.nuxtjs.dev/config-modules
-  serverMiddleware: ['~/api/index.js'], // [TODO] 미들웨어를 추가할 수 있는 연결 인스턴스를 내부적으로 생성
+  serverMiddleware: ['~/server/index.js'], // [TODO] 미들웨어를 추가할 수 있는 연결 인스턴스를 내부적으로 생성
   // https://fkkmemi.github.io/nuxt/nuxt-003-routing/
   modules: ['@nuxtjs/axios'],
 
   axios: {
     proxy: true,
   },
+  plugins: ['~/api/axios.js'],
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {},
+  build: {
+    transpile: ['axios'],
+  },
 }

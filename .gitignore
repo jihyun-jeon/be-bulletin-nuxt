@@ -1,5 +1,9 @@
 # Created by .ignore support plugin (hsz.mobi)
 ### Node template
+
+.env
+db_config.json
+
 # Logs
 /logs
 *.log
@@ -88,3 +92,5 @@ sw.*
 
 # Vim swap files
 *.swp
+
+

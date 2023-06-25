@@ -32,15 +32,20 @@ export default {
     async onModify() {
       // 1. patch
       const id = this.$route.params.id
-      await this.$axios.$patch(`/api/patch/${id}`, {
+      const { message } = await this.$axios.$patch(`/api/patch/${id}`, {
         id,
         title: this.titleData,
       })
 
-      // 2. get
-      const [res] = await this.$axios.$get(`/api/get/${id}`)
-      this.itemData = res
-      this.titleData = res.title
+      if (message.includes('success')) {
+        // 2. get
+        const [res] = await this.$axios.$get(`/api/get/${id}`)
+        this.itemData = res
+        this.titleData = res.title
+      } else {
+        // [TODO]input창 리셋해야함
+        alert('수정권한 없습니다')
+      }
     },
   },
 }

@@ -66,44 +66,44 @@ export default {
     },
   },
   mounted() {
-    const getUserToken = window.localStorage.getItem('ACCESS_TOKEN')
-    this.getData(getUserToken)
+    this.getData()
   },
 
   methods: {
     onPageChange(page) {
       this.$router.push(`/board/${page}`)
     },
-    async getData(getUserToken) {
-      const { data, total } = await this.$axios.$get(
-        '/api/get',
-        {
+    async getData() {
+      try {
+        const { data, total } = await this.$axios.$get('/api/get', {
           params: {
             page: this.parmaId,
             size: COUNTITEM,
           },
-        },
-        {
-          headers: {
-            Authorization: getUserToken,
-          },
-        }
-        // [TODO] api짜는 쪽에서 토큰 받아 토큰 인증 미들웨어 구현해야` 함
-      )
-      // 특정 날짜가 오늘인지 확인 human readable format
-      data.forEach(
-        (item) =>
-          (item.create_at = isToday(new Date(item.create_at))
-            ? '오늘'
-            : format(new Date(item.create_at), 'yyyy-MM-dd')) // 날짜를 원하는 형식으로 포맷팅
-      )
-      this.bulletinList = data
-      this.totalCount = total
+        })
+
+        // 특정 날짜가 오늘인지 확인 human readable format
+        data.forEach(
+          (item) =>
+            (item.create_at = isToday(new Date(item.create_at))
+              ? '오늘'
+              : format(new Date(item.create_at), 'yyyy-MM-dd')) // 날짜를 원하는 형식으로 포맷팅
+        )
+        console.log('data', data)
+        this.bulletinList = data
+        this.totalCount = total
+      } catch {
+        this.$router.push('/')
+      }
     },
 
     async onDelete(itemID) {
-      await this.$axios.$delete(`/api/delete/${itemID}`)
-      await this.getData()
+      const { message } = await this.$axios.$delete(`/api/delete/${itemID}`)
+      if (message.includes('success')) {
+        await this.getData()
+      } else {
+        alert('삭제권한 없습니다')
+      }
     },
   },
 }

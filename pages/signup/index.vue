@@ -35,10 +35,7 @@ export default {
   },
   methods: {
     async onSignup() {
-      const { message } = await this.$axios.$post(
-        '/api/signup',
-        this.signupData
-      )
+      const { message } = await this.$axios.$post('/signup', this.signupData)
       if (message.includes('success')) {
         alert('회원가입 성공')
         this.$router.push('/')

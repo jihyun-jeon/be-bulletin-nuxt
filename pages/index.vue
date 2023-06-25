@@ -42,12 +42,12 @@ export default {
   methods: {
     async onLogin() {
       // api에러시 message제대로 반환x, 이유: 스크립트 오류되서 그냥 중단되서 => 때문에 try catch로 로직 변경
-      // const { message } = await this.$axios.$post('/api/login', this.loginData)
+      // const { message } = await this.$axios.$post('/user/login', this.loginData)
       // if(message){}else{}
 
       try {
         const { message, token } = await this.$axios.$post(
-          '/api/login',
+          '/login',
           this.loginData
         )
 
