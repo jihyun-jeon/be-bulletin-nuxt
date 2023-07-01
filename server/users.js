@@ -12,23 +12,48 @@ const hashPassword = async (password, saltRounds) => {
 }
 
 router.post('/signup', async function (request, response) {
+  const { email } = request.body
   const userPassword = request.body.password
   const hashedPassword = await hashPassword(userPassword, 10) // saltRounds : salt 강도 (10)
 
+  // <회원가입 전 중복 아이디 확인> --------------------------
+  const countQuery = 'select count(*) as count from users where email = ?'
+  const insertQuery = `INSERT INTO users SET ?`
+
   const postData = { ...request.body, password: hashedPassword }
 
-  const query = `INSERT INTO users SET ?`
-
   getConnection((conn) => {
-    conn.query(query, [postData], (error, results) => {
+    // <회원가입 전 중복 아이디 확인>
+    conn.query(countQuery, [email], (error, results) => {
       if (error) {
-        console.error('Mysql Signup Error')
-        response.status(500).send({ error: '데이터베이스 생성 실패' })
-      } else {
-        response.status(200).send({ message: 'signup success' })
+        // mysql 실행 오류시
+        console.log('Error executing query')
+        response.status(500).send({ error: 'Internal Server Error' })
+        conn.release()
+        return
       }
+
+      const isDuplicate = !!results[0].count
+
+      if (isDuplicate) {
+        // 중복 아이디가 있는 경우
+        response.status(409).send({ error: 'Username already exists' })
+        conn.release()
+        return
+      }
+
+      // <회원가입 진행>
+      conn.query(insertQuery, [postData], (error, results) => {
+        if (error) {
+          console.error('Mysql Signup Error')
+          response.status(500).send({ error: 'Internal Server Error' })
+          conn.release()
+          return
+        }
+        response.status(200).send({ message: 'signup success' })
+        conn.release()
+      })
     })
-    conn.release()
   })
 })
 
@@ -46,7 +71,7 @@ router.post('/login', function comparePasswords(request, response) {
       }
 
       if (!results.length) {
-        response.status(401).send({ error: 'no exist user' })
+        response.status(401).send({ error: 'Invalid email' })
         return
       }
 
@@ -60,7 +85,7 @@ router.post('/login', function comparePasswords(request, response) {
           const token = jwt.sign(userEmail, process.env.SECRET_KEY) // 사용자 정보와 비밀키를 이용해 JWT 토큰 생성
           response.status(200).json({ message: 'Login success', token })
         } else {
-          response.status(401).json({ error: 'Invalid email or password' })
+          response.status(401).json({ error: 'Invalid password' })
         }
       })
     })

@@ -16,6 +16,6 @@ export default function ({ $axios }) {
 
   $axios.interceptors.response.use(
     (response) => response, // 2xx 범위 내
-    (err) => Promise.resolve(err.response) // 2xx 범위 밖
+    (err) => Promise.reject(err.response) // 2xx 범위 밖
   )
 }

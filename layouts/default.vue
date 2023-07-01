@@ -3,11 +3,10 @@
     <header class="header">
       <div>
         <p>HEADER - Now page is {{ $route.name }}</p>
-        <ul>
-          <li><NuxtLink to="/">Home</NuxtLink></li>
+        <!-- <ul>
           <li><NuxtLink to="/detail">Detail Page</NuxtLink></li>
           <li><NuxtLink to="/board/1">board page</NuxtLink></li>
-        </ul>
+        </ul> -->
       </div>
       <div>
         <NuxtLink to="/">

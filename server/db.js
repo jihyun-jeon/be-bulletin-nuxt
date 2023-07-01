@@ -18,7 +18,8 @@ module.exports = getConnection
 
 /*
 Connection Pool을 쓴 이유
-:기존엔 mysql.createConnection()으로 connection을 연결한 후 계속 유지되도록 처리하였는데, api를 기능별로 모듈화 하려고 하니 db 연결하는 connection을 모듈화 된 파일별로 또 연결시켜야 됐다.
+:기존엔 mysql.createConnection()으로 connection을 연결한 후 계속 유지되도록 처리하였는데,
+ api를 기능별로 모듈화 하려고 하니 db 연결하는 connection을 모듈화 된 파일별로 또 연결시켜야 됐다.
 : 이 문제를 해결하기 위해 connection pool을 만들어 놨다가 필요한 곳에 가져다 사용하는 식으로 변경함.
 
 데이터베이스에 연결된 Connection을 미리 만들어 둔후 Pool에 보관하였다가 필요할 때

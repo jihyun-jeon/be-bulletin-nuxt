@@ -1,26 +1,30 @@
 <template>
   <v-app id="app">
-    <div class="container">
-      <form class="formWrapper">
+    <div class="formContainer">
+      <form class="formWrapper" @submit.prevent="onLogin">
         <label>
           E-mail
-          <input v-model="loginData.userEmail" type="email" class="inputEl" />
+          <input
+            v-model="loginData.userEmail"
+            type="email"
+            required
+            class="formInputEl"
+          />
         </label>
         <label>
           Password
           <input
             v-model="loginData.userPassword"
             type="password"
-            class="inputEl"
+            required
+            class="formInputEl"
           />
         </label>
-        <button type="submit" class="loginBtn" @click.prevent="onLogin">
-          login
-        </button>
+        <button type="submit" class="formSubmitBtn">login</button>
       </form>
       <div>
         <nuxt-link to="/signup">
-          <button type="button" class="signupBtn">회원가입</button>
+          <button type="button" class="goto">회원가입</button>
         </nuxt-link>
       </div>
     </div>
@@ -57,32 +61,14 @@ export default {
           this.$router.push('/board/1')
         }
       } catch {
-        alert('로그인 실패')
+        alert('이메일 또는 비밀번호를 확인해주세요')
       }
     },
   },
 }
 </script>
-
-<style scoped>
-.rows {
-  display: flex;
-  justify-content: space-between;
-  width: 800px;
-  background-color: lightgray;
-}
-.pagenation {
-  width: 30vw;
-  display: flex;
-  justify-content: space-around;
-  list-style: none;
-}
-.item {
-  display: flex;
-  justify-content: space-between;
-  background-color: lightgray;
-}
-.container {
+<style>
+.formContainer {
   width: 100vw;
   display: flex;
   flex-direction: column;
@@ -99,17 +85,16 @@ export default {
   border: 1px solid black;
   border-radius: 5%;
 }
-
-.inputEl {
+.formInputEl {
   border: 1px solid black;
 }
 
-.loginBtn {
+.formSubmitBtn {
   background-color: teal;
   padding: 5px 10px;
 }
 
-.signupBtn {
+.goto {
   margin-top: 30px;
 }
 </style>
