@@ -25,15 +25,6 @@
                   ></v-text-field>
                 </v-col>
 
-                <v-col cols="12" md="4">
-                  <v-text-field
-                    v-model="nickname"
-                    :counter="12"
-                    label="작성자"
-                    required
-                  ></v-text-field>
-                </v-col>
-
                 <v-col cols="12" md="6">
                   <v-textarea
                     v-model="content"
@@ -67,7 +58,6 @@ export default {
       dialog: false,
       valid: false,
       title: '',
-      nickname: '',
       content: '',
     }
   },
@@ -78,7 +68,7 @@ export default {
         return
       } else {
         // eslint-disable-next-line no-sequences
-        ;(this.title = ''), (this.nickname = ''), (this.content = '')
+        ;(this.title = ''), (this.content = '')
       }
     },
   },
@@ -88,21 +78,11 @@ export default {
     async onClickCreat() {
       this.dialog = false
       // post 요청
-      await this.$axios.$post(
-        '/api/post',
-        {
-          nickname: this.nickname,
-          title: this.title,
-          content: this.content,
-          // create_at: '2023-02-17',
-          hit: 74,
-        }
-        // , {
-        //   headers: {
-        //     Authorization: getUserToken
-        //   },
-        // }
-      )
+      await this.$axios.$post('/api/post', {
+        title: this.title,
+        content: this.content,
+        hit: 0,
+      })
       // 새로 get요청
       this.getData()
       // this.$emit('updated-get', true)
@@ -113,6 +93,5 @@ export default {
 <style>
 .v-application--wrap {
   min-height: 5vh !important;
-  /* max-width: 10% !important; */
 }
 </style>

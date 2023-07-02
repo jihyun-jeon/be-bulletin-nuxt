@@ -58,7 +58,7 @@ export default {
       try {
         const { message } = await this.$axios.$post('/signup', this.signupData)
 
-        if (message.includess('success')) {
+        if (message.includes('success')) {
           alert('회원가입 성공')
           this.$router.push('/')
         }

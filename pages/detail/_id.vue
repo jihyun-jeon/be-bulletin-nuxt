@@ -1,12 +1,13 @@
 <template>
   <div class="mainWrapper">
+    <button type="button" class="backBtn" @click="gotoBack">←</button>
     <div>
       <h1>title : <input v-model="titleData" /></h1>
       <p>nickname : {{ itemData.nickname }}</p>
       <p>create_at : {{ itemData.create_at }}</p>
       <p>hit : {{ itemData.hit }}</p>
       <p>content : {{ itemData.content }}</p>
-
+      <!-- [TODO] 권한 있는 사람일 경우만 수정버튼 보이게끔 -->
       <button class="modifyBtn" @click="onModify">수정하기</button>
     </div>
   </div>
@@ -42,10 +43,14 @@ export default {
         const [res] = await this.$axios.$get(`/api/get/${id}`)
         this.itemData = res
         this.titleData = res.title
+        alert('수정 완료되었습니다')
       } else {
         // [TODO]input창 리셋해야함
         alert('수정권한 없습니다')
       }
+    },
+    gotoBack() {
+      history.go(-1)
     },
   },
 }
@@ -62,9 +67,15 @@ input {
 }
 .mainWrapper {
   width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-content: center;
+  margin-top: 30px;
+  padding: 0 10rem;
+}
+
+.backBtn {
+  padding: 5px 20px;
+  margin-bottom: 20px;
+  background-color: steelblue;
+  border-radius: 20px;
+  font-size: 30px;
 }
 </style>

@@ -12,15 +12,20 @@
         <p>조회수</p>
       </li>
       <li v-for="item in bulletinList" :key="item.id">
-        <button @click="onDelete(item.id)">x</button>
+        <!-- [TODO] 권한 있는 사람일 경우만 x버튼 보이게끔 -->
+        <div>
+          <button @click="onDelete(item.id)">x</button>
 
-        <nuxt-link :to="`/detail/${item.id}`" class="rows">
-          <p>{{ item.id }}</p>
-          <p>{{ item.title }}</p>
-          <p>{{ item.nickname }}</p>
-          <p>{{ item.create_at }}</p>
-          <p>{{ item.hit }}</p>
-        </nuxt-link>
+          <nuxt-link :to="`/detail/${item.id}`">
+            <div class="rows" @click="onClickItem(item.id)">
+              <p>{{ item.id }}</p>
+              <p>{{ item.title }}</p>
+              <p>{{ item.nickname }}</p>
+              <p>{{ item.create_at }}</p>
+              <p>{{ item.hit }}</p>
+            </div>
+          </nuxt-link>
+        </div>
       </li>
     </ul>
     <PaginationVue
@@ -70,6 +75,9 @@ export default {
   },
 
   methods: {
+    onClickItem(boardId) {
+      this.$axios.$post('/api/item-click', { boardId })
+    },
     onPageChange(page) {
       this.$router.push(`/board/${page}`)
     },

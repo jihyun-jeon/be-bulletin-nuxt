@@ -44,7 +44,7 @@ router.get('/get', function (request, response) {
   })
 })
 
-// <detail one item GET>
+// < Detail - one item GET>
 router.get('/get/:boardId', function (request, response) {
   const itemId = request.params.boardId
   const query = `SELECT * FROM boards WHERE id = ${itemId}`
@@ -66,21 +66,36 @@ router.get('/get/:boardId', function (request, response) {
   })
 })
 
-// <one item POST>
+// < Detail - one item POST>
 // [TODO] 문서 보기 https://www.npmjs.com/package/mysql#escaping-query-values
 // Escaping query values
 router.post('/post', function (request, response) {
+  const { user } = request
   const postData = request.body
-  const query = `insert into boards set ?`
+  const selectQuery = 'select * from users where email = ?'
+  const insertQuery = `insert into boards set ?`
 
   getConnection((conn) => {
     try {
-      conn.query(query, [postData], (err, results) => {
+      // <user정보 조회하여 id값 추출>
+      conn.query(selectQuery, [user], (err, results) => {
         if (err) {
           console.error('err', err)
-          response.status(500).send({ error: '데이터베이스 생성 실패' })
+          response.status(500).send({ error: '데이터베이스 조회 실패' })
         } else {
-          response.status(200).send({ message: 'post success' })
+          const { id, nickname } = results[0]
+          // <user id값 담아서 post요청>
+          console.log('id, nickname ', id, nickname)
+          const postData2 = { ...postData, userId: id, nickname }
+          console.log('postData2', postData2)
+          conn.query(insertQuery, [postData2], (err, results) => {
+            if (err) {
+              console.error('err', err)
+              response.status(500).send({ error: '데이터베이스 생성 실패' })
+            } else {
+              response.status(200).send({ message: 'post success' })
+            }
+          })
         }
       })
     } catch (err) {
@@ -90,7 +105,7 @@ router.post('/post', function (request, response) {
   })
 })
 
-// <one item DELETE>
+// < Detail - one item DELETE>
 router.delete('/delete/:itemId', function (request, response) {
   const { user } = request // jh1@naver.com
   const { itemId } = request.params
@@ -127,7 +142,7 @@ router.delete('/delete/:itemId', function (request, response) {
   })
 })
 
-// <one item PATCH>
+// < Detail - one item PATCH>
 router.patch('/patch/:id', function (request, response) {
   const { user } = request // jh1@naver.com
   const boardId = request.params.id
@@ -159,6 +174,39 @@ router.patch('/patch/:id', function (request, response) {
         }
       })
     })
+  })
+})
+
+// < Detail - one item hit count>
+router.post('/item-click', function (request, response) {
+  const { boardId } = request.body
+  const selectQuery = 'select hit from boards where id = ?'
+
+  getConnection((conn) => {
+    try {
+      conn.query(selectQuery, [boardId], (err, results) => {
+        if (err) {
+          console.error('err', err)
+          response.status(500).send({ error: '데이터베이스 조회 실패' })
+        }
+
+        let { hit } = results[0]
+
+        // [TODO] escaping 하는 법
+        const updateQuery = `update boards set hit = ? where id = ?`
+        conn.query(updateQuery, [++hit, boardId], (err, results) => {
+          if (err) {
+            console.error('err', err)
+            response.status(500).send({ error: '데이터베이스 조회 실패' })
+          }
+
+          response.status(200).send({ message: 'hit update success' })
+        })
+      })
+    } catch (err) {
+      console.error('err', err)
+      response.status(500).send({ error: '데이터베이스 조회 실패' })
+    }
   })
 })
 
