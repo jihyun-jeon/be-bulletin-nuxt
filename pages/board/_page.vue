@@ -12,7 +12,6 @@
         <p>조회수</p>
       </li>
       <li v-for="item in bulletinList" :key="item.id">
-        <!-- [TODO] 권한 있는 사람일 경우만 x버튼 보이게끔 -->
         <div>
           <button @click="onDelete(item.id)">x</button>
 
@@ -97,7 +96,6 @@ export default {
               ? '오늘'
               : format(new Date(item.create_at), 'yyyy-MM-dd')) // 날짜를 원하는 형식으로 포맷팅
         )
-        console.log('data', data)
         this.bulletinList = data
         this.totalCount = total
       } catch {
@@ -106,12 +104,18 @@ export default {
     },
 
     async onDelete(itemID) {
-      const { message } = await this.$axios.$delete(`/api/delete/${itemID}`)
-      if (message.includes('success')) {
+      try {
+        await this.$axios.$delete(`/api/delete/${itemID}`)
         await this.getData()
-      } else {
+      } catch {
         alert('삭제권한 없습니다')
       }
+
+      // if (message.includes('success')) {
+      //   await this.getData()
+      // } else {
+      //   alert('삭제권한 없습니다')
+      // }
     },
   },
 }

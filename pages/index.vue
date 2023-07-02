@@ -50,13 +50,15 @@ export default {
       // if(message){}else{}
 
       try {
-        const { message, token } = await this.$axios.$post(
+        const { message, token, nickname } = await this.$axios.$post(
           '/login',
           this.loginData
         )
 
         if (message.includes('success')) {
           alert('로그인 성공')
+
+          window.localStorage.setItem('USEREMAIL', nickname)
           window.localStorage.setItem('ACCESS_TOKEN', token)
           this.$router.push('/board/1')
         }

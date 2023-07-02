@@ -7,7 +7,6 @@ const router = Router() // router 객체는 라우팅 로직을 그룹화하여 
 // <home all GET>
 router.get('/get', function (request, response) {
   const { page, size } = request.query
-  const { user } = request // jh1@naver.com
 
   // SELECT * FROM boards LIMIT <페이지당 자료 개수> OFFSET <몇번째 row부터 출력할 지. (1번째 row면 0)>
   const query = `SELECT * FROM boards ORDER BY id DESC LIMIT ${size}  OFFSET ${
@@ -23,6 +22,7 @@ router.get('/get', function (request, response) {
         if (err) {
           console.error('err', err)
           response.status(500).send({ error: '데이터베이스 조회 실패' })
+          conn.release()
         } else {
           sendData.data = result1
 
@@ -35,11 +35,12 @@ router.get('/get', function (request, response) {
               response.status(200).send(sendData)
             }
           })
+          conn.release()
         }
       })
     } catch (err) {
-      console.log('err', err)
       response.status(500).send({ error: '데이터베이스 조회 실패' })
+      conn.release()
     }
   })
 })
@@ -59,9 +60,10 @@ router.get('/get/:boardId', function (request, response) {
           response.status(200).send(results)
         }
       })
+      conn.release()
     } catch (err) {
-      console.log('err', err)
       response.status(500).send({ error: '데이터베이스 조회 실패' })
+      conn.release()
     }
   })
 })
@@ -82,12 +84,11 @@ router.post('/post', function (request, response) {
         if (err) {
           console.error('err', err)
           response.status(500).send({ error: '데이터베이스 조회 실패' })
+          conn.release()
         } else {
           const { id, nickname } = results[0]
           // <user id값 담아서 post요청>
-          console.log('id, nickname ', id, nickname)
           const postData2 = { ...postData, userId: id, nickname }
-          console.log('postData2', postData2)
           conn.query(insertQuery, [postData2], (err, results) => {
             if (err) {
               console.error('err', err)
@@ -96,11 +97,12 @@ router.post('/post', function (request, response) {
               response.status(200).send({ message: 'post success' })
             }
           })
+          conn.release()
         }
       })
     } catch (err) {
-      console.log('err', err)
       response.status(500).send({ error: '데이터베이스 조회 실패' })
+      conn.release()
     }
   })
 })
@@ -121,11 +123,13 @@ router.delete('/delete/:itemId', function (request, response) {
       if (err) {
         console.error('err', err)
         response.status(500).send({ error: '데이터베이스 조회 실패' })
+        conn.release()
+        return
       }
 
       if (!results.length) {
-        console.log('삭제 권한없음 no')
         response.status(403).send({ message: '삭제 권한 없음' })
+        conn.release()
         return
       }
 
@@ -138,6 +142,7 @@ router.delete('/delete/:itemId', function (request, response) {
           response.status(200).send({ message: 'delete success' })
         }
       })
+      conn.release()
     })
   })
 })
@@ -155,12 +160,13 @@ router.patch('/patch/:id', function (request, response) {
   getConnection((conn) => {
     conn.query(selectQuery, (err, results) => {
       if (err) {
-        console.error('err', err)
         response.status(500).send({ error: '데이터베이스 조회 실패' })
+        conn.release()
+        return
       }
       if (!results.length) {
-        console.log('수정 권한없음 no')
         response.status(403).send({ message: '수정 권한 없음' })
+        conn.release()
         return
       }
 
@@ -173,6 +179,7 @@ router.patch('/patch/:id', function (request, response) {
           response.status(200).send({ message: 'patch success' })
         }
       })
+      conn.release()
     })
   })
 })
@@ -186,13 +193,13 @@ router.post('/item-click', function (request, response) {
     try {
       conn.query(selectQuery, [boardId], (err, results) => {
         if (err) {
-          console.error('err', err)
           response.status(500).send({ error: '데이터베이스 조회 실패' })
+          conn.release()
+          return
         }
 
         let { hit } = results[0]
 
-        // [TODO] escaping 하는 법
         const updateQuery = `update boards set hit = ? where id = ?`
         conn.query(updateQuery, [++hit, boardId], (err, results) => {
           if (err) {
@@ -202,10 +209,11 @@ router.post('/item-click', function (request, response) {
 
           response.status(200).send({ message: 'hit update success' })
         })
+        conn.release()
       })
     } catch (err) {
-      console.error('err', err)
       response.status(500).send({ error: '데이터베이스 조회 실패' })
+      conn.release()
     }
   })
 })

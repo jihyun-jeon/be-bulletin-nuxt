@@ -2,11 +2,7 @@
   <div>
     <header class="header">
       <div>
-        <p>HEADER - Now page is {{ $route.name }}</p>
-        <!-- <ul>
-          <li><NuxtLink to="/detail">Detail Page</NuxtLink></li>
-          <li><NuxtLink to="/board/1">board page</NuxtLink></li>
-        </ul> -->
+        <h1>hello, {{ userEmail }}</h1>
       </div>
       <div>
         <NuxtLink to="/">
@@ -19,7 +15,16 @@
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      userEmail: '',
+    }
+  },
+  mounted() {
+    this.userEmail = window.localStorage.getItem('USEREMAIL')
+  },
+}
 </script>
 
 <style scoped>

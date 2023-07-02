@@ -20,6 +20,7 @@ export default {
     return {
       itemData: {},
       titleData: '',
+      storedTitle: '',
     }
   },
 
@@ -28,25 +29,40 @@ export default {
     const [res] = await this.$axios.$get(`/api/get/${id}`)
     this.itemData = res
     this.titleData = res.title
+    this.storedTitle = res.title
   },
   methods: {
     async onModify() {
       // 1. patch
       const id = this.$route.params.id
-      const { message } = await this.$axios.$patch(`/api/patch/${id}`, {
-        id,
-        title: this.titleData,
-      })
 
-      if (message.includes('success')) {
-        // 2. get
+      try {
+        await this.$axios.$patch(`/api/patch/${id}`, {
+          id,
+          title: this.titleData,
+        })
+
         const [res] = await this.$axios.$get(`/api/get/${id}`)
         this.itemData = res
         this.titleData = res.title
+        this.storedTitle = res.title
         alert('수정 완료되었습니다')
-      } else {
-        // [TODO]input창 리셋해야함
-        alert('수정권한 없습니다')
+      } catch (err) {
+        // [TODO] nuxt에서 isAxiosError는 왜 undefined로 나오는 것인지!!?
+        // if (this.$axios.isAxiosError(err)) {
+        //   console.log('ERR', err)
+        // }
+        if (err.status === 500) {
+          alert('서버 오류')
+          return
+        }
+        if (err.status === 403) {
+          alert('수정권한 없습니다')
+          this.titleData = this.storedTitle
+          return
+        }
+        // <try에서 스트립트 오류일 때>
+        throw err
       }
     },
     gotoBack() {
