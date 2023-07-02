@@ -5,9 +5,8 @@
       <h1>title : <input v-model="titleData" /></h1>
       <p>nickname : {{ itemData.nickname }}</p>
       <p>create_at : {{ itemData.create_at }}</p>
-      <p>hit : {{ itemData.hit }}</p>
+      <p>hit : {{ itemData.hit + 1 }}</p>
       <p>content : {{ itemData.content }}</p>
-      <!-- [TODO] 권한 있는 사람일 경우만 수정버튼 보이게끔 -->
       <button class="modifyBtn" @click="onModify">수정하기</button>
     </div>
   </div>
